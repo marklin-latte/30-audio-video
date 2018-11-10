@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/0.3.9/peer.min.js"></script>
+    <script>
+        var peer = new Peer('A', { host: 'localhost', port: 9000, path: '/api' });
+
+        peer.on('open', function (id) {
+            console.log('My peer ID is: ' + id);
+        });
+
+        peer.on('connection', (conn) => {
+            var con = conn;
+            conn.on('open', () => {
+                // 有任何人加入這個會話時，就會觸發
+                console.log(`${con.peer} is connected with me`);
+            });
+            conn.on('data', function (data) {
+                // 當收到訊息時會執行
+                console.log(`${con.peer} : ` + data);
+                conn.send('HI I am A');
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<html>
+
+<div id="main"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/recorderjs/0.1.0/recorder.js"></script>
+<script>
+
+  navigator.mediaDevices.getUserMedia({ audio: true })
+    .then((stream) => {
+      const audioContext = new AudioContext;
+      const audioInput = audioContext.createMediaStreamSource(stream);
+      const rec = new Recorder(audioInput);
+      // 這個聲音串流一開時，就開始進行錄製。
+      rec.record()
+
+      setTimeout(function () {
+        // 然後在 10 秒後結束錄製，並產生個下載連結。
+        rec.stop();
+        createAudioController(rec);
+        createDownloadLink(rec);
+      }, 10000);
+    })
+    .catch((err) => {
+      console.log('nonono ~~~ !!');
+    })
+
+  function createDownloadLink(rec) {
+    rec && rec.exportWAV((blob) => {
+      const url = URL.createObjectURL(blob);
+      const hf = document.createElement('a');
+
+      hf.href = url;
+      hf.download = 'test.wav';
+      hf.innerHTML = hf.download;
+      main.appendChild(hf);
+    });
+  }
+
+  function createAudioController(rec) {
+    rec && rec.exportWAV((blob) => {
+      const url = URL.createObjectURL(blob);
+      const audio = document.createElement('audio');
+      audio.controls = true;
+      audio.src = url;
+
+      main.appendChild(audio);
+    });
+  }
+
+</script>
+
+</html>
